@@ -3,27 +3,19 @@ module LogAnalysis where
 
 import Log
 
-data MessageType = Info
-                 | Warning 
-                 | Error Int
-    deriving (Show, Eq)
-
-type TimeStamp = Int
-
-data LogMessage = LogMessage MessageType TimeStamp String
-                | Unknown String
-                deriving (Show, Eq)
-
 parseMessage :: String -> LogMessage
-parseMessage msg = LogMessage (msgType msg) (ts msg) (message msg) where
-    msgType msg = case (head msg) of
-        'E' -> Error (errorCode msg)
-        'W' -> Warning
-        'I' -> Info
-        
-        
+parseMessage msg =
+     case (head msg) of
+        'E' -> LogMessage (Error (errorCode msg)) (ts msg) (message msg)
+        'W' -> LogMessage Warning (ts msg) (message msg)
+        'I' -> LogMessage Info (ts msg) (message msg)
+	_   -> Unknown msg
+     where ts msg = 0
+     	   message msg = ""
+	   errorCode msg = 0
 
 parse :: String -> [LogMessage]
-parse = unknown
+parse = map parseMessage . lines
 
-main = do print "Blah"
+main :: IO ()
+main = do print $ parse "E 254 Fuck ...\nW 154 Just a warning\nI 15 some mo Info"

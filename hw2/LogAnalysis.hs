@@ -3,16 +3,20 @@ module LogAnalysis where
 
 import Log
 
+timeStamp :: [String] -> Int
+timeStamp m = case (head m) of
+    'E' -> read (m !! 2) :: Int
+    'W' -> read (m !! 1) :: Int
+    'I' -> read (m !! 1) :: Int
+    _   -> 0
+
 parseMessage :: String -> LogMessage
-parseMessage msg =
-     case (head msg) of
-        'E' -> LogMessage (Error (errorCode msg)) (ts msg) (message msg)
-        'W' -> LogMessage Warning (ts msg) (message msg)
-        'I' -> LogMessage Info (ts msg) (message msg)
-	_   -> Unknown msg
-     where ts msg = 0
-     	   message msg = ""
-	   errorCode msg = 0
+parseMessage msg = let m = words msg in
+     case (head m) of
+        'E' -> LogMessage (Error (errorCode m)) (ts m) (message m)
+        'W' -> LogMessage Warning (ts m) (message m)
+        'I' -> LogMessage Info (ts m) (message m)
+	    _   -> Unknown msg
 
 parse :: String -> [LogMessage]
 parse = map parseMessage . lines

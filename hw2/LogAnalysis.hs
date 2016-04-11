@@ -68,7 +68,10 @@ inOrder Leaf = []
 inOrder (Node left msg right) = inOrder left ++ [msg] ++ inOrder right
 
 whatWentWrong :: [LogMessage] -> [String]
-whatWentWrong = map getMessage . filter (\x -> isError x && getErrorCode x >= 50)
+whatWentWrong = errorsWithCode 50
+
+errorsWithCode :: Int -> [LogMessage] -> [String]
+errorsWithCode code = map getMessage . filter (\x -> isError x && getErrorCode x >= code)
 
 main :: IO ()
 main = print $ parse "E 2 254 Fuck ...\nW 154 Just a warning\nI 15 some mo Info"

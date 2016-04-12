@@ -1,5 +1,7 @@
 module Golf where
 
+import Data.List
+
 -- Exercise 1
 
 -- Takes an integer n and a list of elements and returns a list of every nth element
@@ -21,3 +23,13 @@ localMaxima (x:y:[]) = []
 localMaxima (x:y:z:xs)
     | x < y && z < y = y : localMaxima (y:z:xs)
     | otherwise = localMaxima (y:z:xs)
+    
+    
+-- Exercise 3
+
+hist [] = []
+hist l@(x:xs) = let (m, n) = partition (== x) l in (x, length m) : hist n
+
+histStr l = let m = maximum . map snd l
+                wh = map (\_ -> ' ') [1..m] in 
+    intercalate "\n" $ transpose $ 

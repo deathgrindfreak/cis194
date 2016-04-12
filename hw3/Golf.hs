@@ -13,3 +13,11 @@ skip l = map ((flip skipN) l) [1..(length l)]
 
 
 -- Exercise 2
+
+localMaxima :: [Int] -> [Int]
+localMaxima [] = []
+localMaxima [x] = []
+localMaxima (x:y:[]) = []
+localMaxima (x:y:z:xs)
+    | x < y && z < y = y : localMaxima (y:z:xs)
+    | otherwise = localMaxima (y:z:xs)

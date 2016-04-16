@@ -27,9 +27,13 @@ localMaxima (x:y:z:xs)
     
 -- Exercise 3
 
-hist [] = []
-hist l@(x:xs) = let (m, n) = partition (== x) l in (x, length m) : hist n
+hist :: [Int] -> [(Int, Int)]
+hist = map (\l@(x:_) -> (x, length l)) . groupBy (==) . sort
 
+{-
+histStr :: [(Int, Int)] -> String
 histStr l = let m = maximum . map snd l
-                wh = map (\_ -> ' ') [1..m] in 
-    intercalate "\n" $ transpose $ 
+                wh w = map (\_ -> ' ') [1..w] in 
+                undefined
+    --intercalate "\n" $ transpose $ 
+-}

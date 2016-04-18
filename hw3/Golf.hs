@@ -30,8 +30,14 @@ localMaxima (x:y:z:xs)
 hist :: [Int] -> [(Int, Int)]
 hist = map (\l@(x:_) -> (x, length l)) . groupBy (==) . sort
 
-{-
+rpt :: Int -> Char -> String
+rpt x ch = take x $ repeat ch
+
 histStr :: [(Int, Int)] -> String
+histStr l = let m = (maximum . map snd) l 
+            in map (\(n, x) -> (rpt (m - x) ' ') ++ (rpt x '*') ++ "=" ++ show n) l
+
+{-
 histStr l = let m = maximum . map snd l
                 wh w = map (\_ -> ' ') [1..w] in 
                 undefined

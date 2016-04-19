@@ -28,6 +28,10 @@ data Tree a = Leaf | Node Integer (Tree a) a (Tree a)
 height :: Tree a -> Integer
 height Leaf = -1
 height (Node h _ _ _) = h
+
+calcH :: Tree a -> Integer
+calcH Leaf = 0
+calcH (Node _ left _ right) = 1 + max (calcH left) (calcH right)
     
 foldTree :: Ord a => [a] -> Tree a
 foldTree = foldr insert Leaf
@@ -35,7 +39,8 @@ foldTree = foldr insert Leaf
           insert x (Node h left n right)
             | hl < hr = Node h (insert x left) n right
             | hl > hr = Node h left n (insert x right)
-            | otherwise = Node (h + 1) (insert x left) n right
+            | otherwise = let t@(Node _ l nn r) = Node h (insert x left) n right
+                          in Node (calcH t - 1) l nn r
             where hl = height left
                   hr = height right
             
@@ -43,7 +48,7 @@ foldTree = foldr insert Leaf
 -- Exercise 3
 
 xor :: [Bool] -> Bool
-xor = foldr (\x b -> case x of True -> not b; False -> b) False
+xor = foldr (\x b -> if x then not b else b) False
 
 map' :: (a -> b) -> [a] -> [b]
 map' f = foldr (\x acc -> f x : acc) []

@@ -25,12 +25,19 @@ fun2' = sum . filter even . takeWhile (/=1) . iterate (\n -> if even n then n `d
 data Tree a = Leaf | Node Integer (Tree a) a (Tree a)
     deriving (Show, Eq)
     
+height :: Tree a -> Integer
+height Leaf = -1
+height (Node h _ _ _) = h
+    
 foldTree :: Ord a => [a] -> Tree a
-foldTree l = foldr (insert 0) Leaf l
-    where insert xh x Leaf = Node xh Leaf x Leaf
-          insert xh x (Node h left n right)
-            | x < n = Node h (insert (xh+1) x left) n right
-            | x > n = Node h left n (insert (xh+1) x right)
+foldTree = foldr insert Leaf
+    where insert x Leaf = Node 0 Leaf x Leaf
+          insert x (Node h left n right)
+            | hl < hr = Node h (insert x left) n right
+            | hl > hr = Node h left n (insert x right)
+            | otherwise = Node (h + 1) (insert x left) n right
+            where hl = height left
+                  hr = height right
             
 
 -- Exercise 3
@@ -40,9 +47,6 @@ xor = foldr (\x b -> case x of True -> not b; False -> b) False
 
 map' :: (a -> b) -> [a] -> [b]
 map' f = foldr (\x acc -> f x : acc) []
-
-myFoldl :: (a -> b -> a) -> a -> [b] -> a
-myFoldl = undefined
 
 
 -- Exercise 4

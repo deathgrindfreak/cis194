@@ -1,10 +1,11 @@
 {-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module Calc where
 
 import ExprT
 import Parser
-import StackVM
+import qualified StackVM as VM
 
 
 -- Exercise 1
@@ -34,9 +35,9 @@ class Expr a where
     mul :: a -> a -> a
     
 instance Expr ExprT where
-    lit x = Lit x
-    add a b = Add a b
-    mul a b = Mul a b
+    lit = Lit
+    add = Add
+    mul = Mul
     
 
 -- Exercise 4
@@ -55,7 +56,7 @@ instance Expr Bool where
 newtype MinMax = MinMax Integer deriving (Eq, Show)
     
 instance Expr MinMax where
-    lit x = MinMax x 
+    lit = MinMax
     add (MinMax a) (MinMax b) = MinMax (max a b)
     mul (MinMax a) (MinMax b) = MinMax (min a b)
     
@@ -77,8 +78,10 @@ testMod7 = testExpr :: Maybe Mod7
 
 -- Exercise 5
 
-instance Expr Program where
-    lit x = undefined
-    add a b = undefined
-    mul a b = undefined
-    
+instance Expr VM.Program where
+    lit x = [VM.PushI x]
+    mul a b = a ++ b ++ [VM.Mul]
+    add a b = a ++ b ++ [VM.Add]
+
+compile :: String -> Maybe VM.Program
+compile = parseExp lit mul add

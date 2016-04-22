@@ -11,12 +11,9 @@ import qualified StackVM as VM
 -- Exercise 1
 
 eval :: ExprT -> Integer
-eval (Add (Lit a) (Lit b)) = a + b
-eval (Add (Lit a) b) = a + eval b
-eval (Add a (Lit b)) = eval a + b
-eval (Mul (Lit a) (Lit b)) = a * b
-eval (Mul (Lit a) b) = a * eval b
-eval (Mul a (Lit b)) = eval a * b
+eval (Lit a) = a
+eval (Add a b) = eval a + eval b
+eval (Mul a b) = eval a * eval b
 
 
 -- Exercise 2

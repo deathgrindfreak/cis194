@@ -29,6 +29,10 @@ data Command = View
              | Noop
   deriving (Eq, Show, Read)
 
+instance Applicative (Editor b) where
+    pure = return
+    (<*>) = ap
+
 commands :: [String]
 commands = map show [View, Edit, Next, Prev, Quit]
 

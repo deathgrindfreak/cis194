@@ -1,8 +1,11 @@
+{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
+
 module JoinList where
 
 import Data.Monoid
 import Sized
 import Scrabble
+import Buffer
 
 
 (!!?) :: [a] -> Int -> Maybe a
@@ -81,8 +84,8 @@ dropJ i (Append _ l r)
 
 takeJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
 takeJ _ Empty        = Empty
-takeJ 0 _        = Empty
-takeJ i s@Single{} = s
+takeJ 0 _            = Empty
+takeJ i s@Single{}   = s
 takeJ i (Append _ l r)
     | i < s     = takeJ i l 
     | otherwise = l +++ takeJ (i - s) r
@@ -93,3 +96,31 @@ takeJ i (Append _ l r)
 
 scoreLine :: String -> JoinList Score String
 scoreLine s = Single (scoreString s) s
+
+
+-- Exercise 4
+
+jSize' :: JoinList (Score, Size) a -> Int
+jSize' = getSize . size . snd . tag
+
+scoreLine' :: String -> JoinList (Score, Size) String
+scoreLine' s = Single (scoreString s, Size 1) s
+
+replaceJ :: (Sized b, Monoid b) => Int -> a -> JoinList b a -> JoinList b a
+replaceJ _ _ Empty        = Empty
+replaceJ 0 b (Single m a) = Single m b
+replaceJ i b (Single m a) = Single m a
+replaceJ i b (Append _ l r)
+    | i < s     = replaceJ i b l +++ r
+    | otherwise = l +++ replaceJ (i - s) b r
+    where s = jSize l
+
+instance Buffer (JoinList (Score, Size) String) where
+  toString                = unlines . jlToList
+  fromString              = scoreLine'
+  line                    = indexJ
+  replaceLine             = replaceJ
+  numLines                = jSize'
+  value (Append m _ _)    = (getScore . fst) m
+  value (Single m _)      = (getScore . fst) m
+  value Empty             = 0

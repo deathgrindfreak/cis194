@@ -6,6 +6,9 @@ import Data.Monoid
 data Score = Score Int
     deriving (Show)
     
+getScore :: Score -> Int
+getScore (Score n) = n
+    
 instance Monoid Score where
     mempty = Score 0
     mappend (Score n1) (Score n2) = Score (n1 + n2)

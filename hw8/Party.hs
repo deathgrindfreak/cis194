@@ -1,5 +1,6 @@
 module Party where
 
+import Data.Tree
 import Data.Monoid
 import Employee
 
@@ -16,3 +17,11 @@ instance Monoid GuestList where
 moreFun :: GuestList -> GuestList -> GuestList
 moreFun l@(GL _ f1) r@(GL _ f2) | f1 < f2  = r
                                 | f2 >= f2 = l
+
+
+-- Exercise 2
+
+treeFold :: (a -> b -> b) -> b -> Tree a -> b
+treeFold f z Node {rootLabel = r, subForest = fs} = case fs of
+    [] -> f r z
+    _  -> f r (foldr (flip (treeFold f)) z fs)

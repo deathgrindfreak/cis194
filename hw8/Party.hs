@@ -25,3 +25,15 @@ treeFold :: (a -> b -> b) -> b -> Tree a -> b
 treeFold f z Node {rootLabel = r, subForest = fs} = case fs of
     [] -> f r z
     _  -> f r (foldr (flip (treeFold f)) z fs)
+    
+    
+-- Exercise 3
+
+nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
+nextLevel = undefined
+
+
+-- Exercise 4
+
+maxFun :: Tree Employee -> GuestList
+maxFun = undefined

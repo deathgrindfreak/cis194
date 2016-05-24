@@ -69,7 +69,11 @@ first f (a, b) = (f a, b)
 
 -- Exercise 2
 
-{-
 instance Applicative Parser where
-    pure = Parser 
-    -}
+    pure a = Parser f
+      where f s = Just (a, s)
+    Parser p1 <*> Parser p2 = Parser f
+      where f s = case p1 s of
+              Just (np, r) -> f2 r
+              Nothing      -> undefined
+            where f2 s

@@ -4,9 +4,9 @@
 
 module AParser where
 
-import           Control.Applicative
-
-import           Data.Char
+import Control.Applicative
+import Data.Char
+import Debug.Trace
 
 -- A parser for a value of type a is a function which takes a String
 -- represnting the input to be parsed, and succeeds or fails; if it
@@ -63,9 +63,7 @@ posInt = Parser f
 instance Functor Parser where
     fmap f (Parser p) = Parser np 
         where np s = fmap (first f) (p s)
-
-first :: (a -> b) -> (a, c) -> (b, c)
-first f (a, b) = (f a, b)
+              first f (a, b) = (f a, b)
 
 -- Exercise 2
 
@@ -74,6 +72,20 @@ instance Applicative Parser where
       where f s = Just (a, s)
     Parser p1 <*> Parser p2 = Parser f
       where f s = case p1 s of
-              Just (np, r) -> f2 r
-              Nothing      -> undefined
-            where f2 s
+              Nothing      -> Nothing
+              Just (np, r) -> case p2 r of  
+                Just (a, s) -> Just (np a, s)
+                Nothing     -> Nothing
+
+-- Exercise 3
+
+abParser :: Parser (Char, Char)
+abParser = (,) <$> char 'a' <*> char 'b'
+
+abParser_ :: Parser ()
+abParser_ = f <$> char 'a' <*> char 'b'
+  where f a b = ()
+  
+intPair :: Parser [Integer]
+intPair = f <$> posInt <*> char ' ' <*> posInt
+  where f a _ b = a : b : []

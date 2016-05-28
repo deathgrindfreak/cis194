@@ -84,8 +84,23 @@ abParser = (,) <$> char 'a' <*> char 'b'
 
 abParser_ :: Parser ()
 abParser_ = f <$> char 'a' <*> char 'b'
-  where f a b = ()
+  where f _ _ = ()
   
 intPair :: Parser [Integer]
 intPair = f <$> posInt <*> char ' ' <*> posInt
-  where f a _ b = a : b : []
+  where f a _ b = [a, b]
+
+-- Exercise 4
+
+instance Alternative Parser where
+  empty = Parser f where f s = Nothing
+  Parser p1 <|> Parser p2 = Parser f
+    where f s = case p1 s of 
+            Nothing -> p2 s
+            _       -> p1 s
+
+-- Exercise 5
+
+intOrUppercase :: Parser ()
+intOrUppercase = (f <$> satisfy isUpper) <|> (f <$> posInt)
+    where f _ = ()

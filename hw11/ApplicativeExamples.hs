@@ -1,4 +1,4 @@
-module ApplicativeExamples where
+module ApplicativeExamples (mapA', sequenceA', replicateA) where
 
 import Control.Applicative
 

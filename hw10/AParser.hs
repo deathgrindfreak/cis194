@@ -61,9 +61,8 @@ posInt = Parser f
 -- Exercise 1
 
 instance Functor Parser where
-    fmap f (Parser p) = Parser np 
-        where np s = fmap (first f) (p s)
-              first f (a, b) = (f a, b)
+    fmap f (Parser p) = Parser $ \s -> fmap (first f) (p s)
+      where first f (a, b) = (f a, b)
 
 -- Exercise 2
 
